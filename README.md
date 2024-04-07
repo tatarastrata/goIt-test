@@ -7,7 +7,7 @@ Main pages:
 - `/<id>/create/order` - create order request;
 - `/<id>/create/deliver` - create delivery request;
 - `/<id>/requests` - list of all user requests;
-- `/<id>` - redirect to `/<id>`/requests;
+- `/<id>` - redirect to `/<id>/requests`;
 - `/requests` - list of all; 
 
 `<id>` - defines the user. According to this parameter, the created request will be added to a certain user.
@@ -27,7 +27,7 @@ The list of all requests page must have all requests of all users. User have to 
 ## Requirements
 1. The application has to be done using any framework
 2. Build your project using builder
-3. You have to use any CSS preprocessors
+3. You have to use any CSS preprocessor
 4. You have to use any UI framework or any CSS framework
 5. You have to use routing in your work
 6. You have to use state management
