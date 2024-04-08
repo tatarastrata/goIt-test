@@ -1,6 +1,6 @@
 import React from 'react';
 import { IRequestTypePickPropTypes } from './request-type-pick-prop-types';
-import { Button, HStack } from '@chakra-ui/react';
+import { Button, Container, Heading, HStack } from '@chakra-ui/react';
 import { ERequestType } from '../../types/request-types';
 import { useNavigation } from '../../utils';
 import { IRoutingParams } from '../../types';
@@ -16,20 +16,23 @@ const RequestTypePick: React.FC<IRequestTypePickPropTypes> = () => {
   };
 
   return (
-    <HStack>
-      <Button
-        isDisabled={!!requestType}
-        onClick={() => handleOptionSelect(ERequestType.ORDER)}
-      >
-        Order
-      </Button>
-      <Button
-        isDisabled={!!requestType}
-        onClick={() => handleOptionSelect(ERequestType.DELIVERY)}
-      >
-        Delivery
-      </Button>
-    </HStack>
+    <Container>
+      <Heading mb={4}>What request type would you like to place?</Heading>
+      <HStack justify={'center'}>
+        <Button
+          isDisabled={!!requestType}
+          onClick={() => handleOptionSelect(ERequestType.ORDER)}
+        >
+          Order
+        </Button>
+        <Button
+          isDisabled={!!requestType}
+          onClick={() => handleOptionSelect(ERequestType.DELIVERY)}
+        >
+          Delivery
+        </Button>
+      </HStack>
+    </Container>
   );
 };
 

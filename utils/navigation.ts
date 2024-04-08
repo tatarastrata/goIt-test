@@ -21,9 +21,12 @@ export const useNavigation = () => {
     [router, userIdFromRoute],
   );
 
-  const goToUserRequestsPage = useCallback(() => {
-    router.push(`/${userIdFromRoute}/requests`);
-  }, [router, userIdFromRoute]);
+  const goToUserRequestsPage = useCallback(
+    (userId: string) => {
+      router.push(`/${userId}/requests`);
+    },
+    [router],
+  );
 
   const goToAllRequestsPage = useCallback(() => {
     router.push('/requests');

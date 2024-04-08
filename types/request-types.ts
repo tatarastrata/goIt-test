@@ -14,6 +14,8 @@ export interface ICommonRequest {
   fromCity: string;
   toCity: string;
   dispatchDate: Date;
+  userId: string;
+  requestId: string;
 }
 
 export interface IOrderRequest extends ICommonRequest {

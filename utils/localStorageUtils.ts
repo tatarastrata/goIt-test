@@ -8,7 +8,7 @@ export const saveRequestToLocalStorage = (
   const storedUserRequests = localStorage.getItem(
     ELocalStorageKeys.USER_REQUESTS,
   );
-  const storedAllRequests = localStorage.gerItem(
+  const storedAllRequests = localStorage.getItem(
     ELocalStorageKeys.ALL_REQUESTS,
   );
   const userRequests = storedUserRequests ? JSON.parse(storedUserRequests) : [];
@@ -32,6 +32,5 @@ export const saveRequestToLocalStorage = (
 
 export const loadRequestsFromLocalStorage = (): Array<TRequest> => {
   const data = localStorage.getItem('userRequests');
-  console.log(localStorage);
-  return data ? JSON.parse(data) : {};
+  return data ? JSON.parse(data) : [];
 };
