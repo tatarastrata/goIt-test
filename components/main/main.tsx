@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { IMainPropTypes } from './main-prop-types';
 import {
   Button,
   Container,
@@ -11,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ELocalStorageKeys } from '../../types/local-storage-types';
 import { useNavigation } from '../../utils';
 
-const Main: React.FC<IMainPropTypes> = () => {
+const Main: React.FC = () => {
   const { goToNewRequestPage, goToUserRequestsPage } = useNavigation();
   const [userId, setUserId] = useState<string>('');
   const [isSmallerThat440] = useMediaQuery('(max-width: 440px)');

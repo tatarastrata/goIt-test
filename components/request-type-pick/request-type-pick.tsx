@@ -1,5 +1,4 @@
 import React from 'react';
-import { IRequestTypePickPropTypes } from './request-type-pick-prop-types';
 import {
   Button,
   Container,
@@ -12,7 +11,7 @@ import { useNavigation } from '../../utils';
 import { IRoutingParams } from '../../types';
 import { useRouter } from 'next/router';
 
-const RequestTypePick: React.FC<IRequestTypePickPropTypes> = () => {
+const RequestTypePick: React.FC = () => {
   const { gotToRequestTypePage } = useNavigation();
   const router = useRouter();
   const { requestType }: IRoutingParams = router.query;

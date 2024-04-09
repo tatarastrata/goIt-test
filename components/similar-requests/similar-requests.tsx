@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { ISimilarRequestsPropTypes } from './similar-requests-prop-types';
 import {
   Box,
   HStack,
@@ -20,7 +19,7 @@ const radios: Array<[string, string]> = [
   [ERequestKeys.DISPATCH_DATE, 'Dispatch date'],
 ];
 
-const SimilarRequests: React.FC<ISimilarRequestsPropTypes> = () => {
+const SimilarRequests: React.FC = () => {
   const [filterFactor, setFilterFactor] = useState<string>(radios[0][0]);
   const { userRequests, selectedRequest } = useRequestContext();
 
