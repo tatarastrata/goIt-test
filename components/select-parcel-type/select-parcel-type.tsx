@@ -4,12 +4,20 @@ import { Box, Select } from '@chakra-ui/react';
 import { EDeliveryParcelType, ERequestType } from '../../types';
 import { useFormikContext } from 'formik';
 import { TRequestForm } from '../request-form/request-form-prop-types';
+import { useRouter } from 'next/router';
 
 const SelectParcelType: React.FC<TSelectParcelTypePropTypes> = (props) => {
   const {
     values: { type },
   } = useFormikContext<TRequestForm>();
   const isOrder = useMemo(() => type === ERequestType.ORDER, [type]);
+  const router = useRouter();
+  const { pathname } = router;
+
+  const inputSize = useMemo(
+    () => (pathname.includes('create') ? 'md' : 'sm'),
+    [pathname],
+  );
   return (
     <Box>
       <Select
@@ -19,6 +27,8 @@ const SelectParcelType: React.FC<TSelectParcelTypePropTypes> = (props) => {
           borderColor: '#38B2AC',
           cursor: 'pointer',
         }}
+        size={inputSize}
+        variant="filled"
       >
         {isOrder ? (
           <option value="other">other</option>

@@ -1,6 +1,12 @@
 import React from 'react';
 import { IRequestTypePickPropTypes } from './request-type-pick-prop-types';
-import { Button, Container, Heading, HStack } from '@chakra-ui/react';
+import {
+  Button,
+  Container,
+  Heading,
+  Stack,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { ERequestType } from '../../types/request-types';
 import { useNavigation } from '../../utils';
 import { IRoutingParams } from '../../types';
@@ -10,6 +16,7 @@ const RequestTypePick: React.FC<IRequestTypePickPropTypes> = () => {
   const { gotToRequestTypePage } = useNavigation();
   const router = useRouter();
   const { requestType }: IRoutingParams = router.query;
+  const [isSmallerThan400] = useMediaQuery('(max-width: 400px)');
 
   const handleOptionSelect = (option: ERequestType) => {
     gotToRequestTypePage(option);
@@ -18,20 +25,23 @@ const RequestTypePick: React.FC<IRequestTypePickPropTypes> = () => {
   return (
     <Container>
       <Heading mb={4}>What request would you like to place this time?</Heading>
-      <HStack justify={'center'}>
+      <Stack
+        justify="flex-start"
+        direction={isSmallerThan400 ? 'column' : 'row'}
+      >
         <Button
           isDisabled={!!requestType}
           onClick={() => handleOptionSelect(ERequestType.ORDER)}
         >
-          Order
+          Send a parcel
         </Button>
         <Button
           isDisabled={!!requestType}
           onClick={() => handleOptionSelect(ERequestType.DELIVERY)}
         >
-          Delivery
+          Deliver me a parcel
         </Button>
-      </HStack>
+      </Stack>
     </Container>
   );
 };

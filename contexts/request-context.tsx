@@ -60,6 +60,9 @@ const RequestContextProvider: React.FC<IRequestContextPropTypes> = ({
       delete updatedRequests[requestId];
       return updatedRequests;
     });
+    if (selectedRequest?.requestId == requestId) {
+      setSelectedRequest(null);
+    }
   };
 
   //Function to edit a request

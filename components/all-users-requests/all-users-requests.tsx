@@ -14,15 +14,14 @@ import {
   Badge,
   Heading,
   Text,
-  HStack,
+  Button,
 } from '@chakra-ui/react';
 import { formatDate } from '../../utils';
 import { ERequestType } from '../../types';
-import { EditRequestButton, DeleteRequestButton } from '../../components';
 import { useRequestContext } from '../../contexts/request-context';
 
 const AllUsersRequests: React.FC = () => {
-  const { userRequests } = useRequestContext();
+  const { userRequests, addSelectedRequest } = useRequestContext();
   const requests = useMemo(() => Object.values(userRequests), [userRequests]);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: string]: boolean;
@@ -56,7 +55,7 @@ const AllUsersRequests: React.FC = () => {
               {Object.values(ETableHeaders).map((header) => (
                 <Th key={header}>{header}</Th>
               ))}
-              <Th>Actions</Th>
+              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -67,12 +66,11 @@ const AllUsersRequests: React.FC = () => {
                     {request.type}
                   </Badge>
                 </Td>
-                <Td>{request.parcelType}</Td>
                 <Td>
                   {request.fromCity} 🔜 <br />
                   {request.toCity}
                 </Td>
-                <Td>{formatDate(request.dispatchDate)}</Td>
+                <Td>{formatDate({ date: request.dispatchDate })}</Td>
                 <Td whiteSpace="wrap">
                   {request.type === ERequestType.ORDER && (
                     <Text
@@ -89,10 +87,12 @@ const AllUsersRequests: React.FC = () => {
                   )}
                 </Td>
                 <Td>
-                  <HStack spacing={1}>
-                    <EditRequestButton requestId={request.requestId} />
-                    <DeleteRequestButton requestId={request.requestId} />
-                  </HStack>
+                  <Button
+                    size="sm"
+                    onClick={() => addSelectedRequest(request.requestId)}
+                  >
+                    View details
+                  </Button>
                 </Td>
               </Tr>
             ))}

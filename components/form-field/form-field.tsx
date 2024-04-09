@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { IFormFieldPropTypes } from './form-field-prop-types';
 import {
   FormControl,
@@ -8,16 +8,24 @@ import {
 } from '@chakra-ui/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import {
-  ERequestFormFields,
   REQUEST_FORM_LABELS,
   TRequestForm,
 } from '../request-form/request-form-prop-types';
 import { DateDispatchPicker, SelectParcelType } from '../../components';
+import { ERequestKeys } from '../../types';
+import { useRouter } from 'next/router';
 
 const FormField: React.FC<IFormFieldPropTypes> = ({
   fieldName,
 }: IFormFieldPropTypes) => {
   const { errors, touched } = useFormikContext<TRequestForm>();
+  const router = useRouter();
+  const { pathname } = router;
+
+  const inputSize = useMemo(
+    () => (pathname.includes('create') ? 'md' : 'sm'),
+    [pathname],
+  );
   return (
     <Field name={fieldName}>
       {({ field }: FieldProps) => (
@@ -28,17 +36,16 @@ const FormField: React.FC<IFormFieldPropTypes> = ({
           }
         >
           <FormLabel>{REQUEST_FORM_LABELS[fieldName]}</FormLabel>
-          {fieldName === ERequestFormFields.PARCEL_TYPE ? (
+          {fieldName === ERequestKeys.PARCEL_TYPE ? (
             <SelectParcelType {...field} />
-          ) : fieldName === ERequestFormFields.DISPATCH_DATE ? (
+          ) : fieldName === ERequestKeys.DISPATCH_DATE ? (
             <DateDispatchPicker {...field} />
           ) : (
             <Input
               {...field}
-              isDisabled={fieldName === ERequestFormFields.REQUEST_TYPE}
-              _hover={{
-                borderColor: '#38B2AC',
-              }}
+              isDisabled={fieldName === ERequestKeys.REQUEST_TYPE}
+              variant="filled"
+              size={inputSize}
             />
           )}
           {errors[fieldName as keyof TRequestForm] && (

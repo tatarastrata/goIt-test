@@ -1,6 +1,6 @@
 export enum EDeliveryParcelType {
-  GADGET = 'gadget',
-  DRINK = 'drink',
+  GADGET = 'gadgets',
+  DRINK = 'drinks',
   CLOTHES = 'clothes',
   MEDICINES = 'medicines',
 }
@@ -8,6 +8,17 @@ export enum EDeliveryParcelType {
 export enum ERequestType {
   ORDER = 'order',
   DELIVERY = 'delivery',
+}
+
+export enum ERequestKeys {
+  REQUEST_TYPE = 'type',
+  FROM_CITY = 'fromCity',
+  TO_CITY = 'toCity',
+  DISPATCH_DATE = 'dispatchDate',
+  DESCRIPTION = 'description',
+  PARCEL_TYPE = 'parcelType',
+  USER_ID = 'userId',
+  REQUEST_ID = 'requestId',
 }
 
 export interface ICommonRequest {

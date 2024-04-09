@@ -1,13 +1,13 @@
 // [id]/requests page;
 import React from 'react';
-import { AllUsersRequests, EditRequestModal } from '../../components';
+import { AllUsersRequests, RequestModal } from '../../components';
 import { Box } from '@chakra-ui/react';
 
 const RequestsPage: React.FC = () => {
   return (
-    <Box>
+    <Box px="4vh">
       <AllUsersRequests />
-      <EditRequestModal />
+      <RequestModal />
     </Box>
   );
 };

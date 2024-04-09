@@ -1,5 +1,5 @@
-import { ERequestFormFields } from '../request-form/request-form-prop-types';
+import { ERequestKeys } from '../../types';
 
 export interface IFormFieldPropTypes {
-  fieldName: ERequestFormFields;
+  fieldName: ERequestKeys;
 }

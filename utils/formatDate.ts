@@ -1,6 +1,17 @@
 import { format, isToday, isTomorrow, differenceInDays } from 'date-fns';
 
-export const formatDate = (date: Date) => {
+export interface IFormatDatePropTypes {
+  date: Date | undefined;
+  isExpanded?: boolean;
+}
+export const formatDate = ({
+  date = new Date(),
+  isExpanded = false,
+}: IFormatDatePropTypes): string => {
+  if (isExpanded) {
+    return format(date, 'MMMM dd, yyyy');
+  }
+
   if (isToday(date)) {
     return 'today';
   } else if (isTomorrow(date)) {

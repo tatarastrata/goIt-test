@@ -2,11 +2,15 @@ import React from 'react';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import RequestForm from '../request-form';
 import {
-  ERequestFormFields,
   RequestFormSchema,
   TRequestForm,
 } from '../request-form/request-form-prop-types';
-import { EDeliveryParcelType, ERequestType, IRoutingParams } from '../../types';
+import {
+  EDeliveryParcelType,
+  ERequestKeys,
+  ERequestType,
+  IRoutingParams,
+} from '../../types';
 import router from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 import { useRequestContext } from '../../contexts/request-context';
@@ -22,23 +26,23 @@ const SubmitRequestForm: React.FC = () => {
   const initialValues: TRequestForm =
     requestType === ERequestType.DELIVERY
       ? {
-          [ERequestFormFields.REQUEST_TYPE]: ERequestType.DELIVERY,
-          [ERequestFormFields.FROM_CITY]: '',
-          [ERequestFormFields.TO_CITY]: '',
-          [ERequestFormFields.PARCEL_TYPE]: EDeliveryParcelType.GADGET,
-          [ERequestFormFields.DISPATCH_DATE]: new Date(),
-          [ERequestFormFields.USER_ID]: userId || uuidv4(),
-          [ERequestFormFields.REQUEST_ID]: uuidv4(),
+          [ERequestKeys.REQUEST_TYPE]: ERequestType.DELIVERY,
+          [ERequestKeys.FROM_CITY]: '',
+          [ERequestKeys.TO_CITY]: '',
+          [ERequestKeys.PARCEL_TYPE]: EDeliveryParcelType.GADGET,
+          [ERequestKeys.DISPATCH_DATE]: new Date(),
+          [ERequestKeys.USER_ID]: userId || uuidv4(),
+          [ERequestKeys.REQUEST_ID]: uuidv4(),
         }
       : {
-          [ERequestFormFields.REQUEST_TYPE]: ERequestType.ORDER,
-          [ERequestFormFields.FROM_CITY]: '',
-          [ERequestFormFields.TO_CITY]: '',
-          [ERequestFormFields.PARCEL_TYPE]: 'other',
-          [ERequestFormFields.DISPATCH_DATE]: new Date(),
-          [ERequestFormFields.DESCRIPTION]: '',
-          [ERequestFormFields.USER_ID]: userId || uuidv4(),
-          [ERequestFormFields.REQUEST_ID]: uuidv4(),
+          [ERequestKeys.REQUEST_TYPE]: ERequestType.ORDER,
+          [ERequestKeys.FROM_CITY]: '',
+          [ERequestKeys.TO_CITY]: '',
+          [ERequestKeys.PARCEL_TYPE]: 'other',
+          [ERequestKeys.DISPATCH_DATE]: new Date(),
+          [ERequestKeys.DESCRIPTION]: '',
+          [ERequestKeys.USER_ID]: userId || uuidv4(),
+          [ERequestKeys.REQUEST_ID]: uuidv4(),
         };
 
   const handleSubmitNewRequest = (values: TRequestForm) => {

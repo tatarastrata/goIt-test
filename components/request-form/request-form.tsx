@@ -1,35 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import {
-  ERequestFormFields,
-  TRequestForm,
-  RequestFormSchema,
-} from './request-form-prop-types';
-import { Box, Button, Stack, useToast } from '@chakra-ui/react';
-import { Form, Formik, useFormikContext } from 'formik';
-import { useRouter } from 'next/router';
-import { EDeliveryParcelType, ERequestType, IRoutingParams } from '../../types';
-import { useNavigation } from '../../utils';
+import { TRequestForm } from './request-form-prop-types';
+import { HStack, Stack } from '@chakra-ui/react';
+import { useFormikContext } from 'formik';
 import FormField from '../form-field';
-import { v4 as uuidv4 } from 'uuid';
-import { useRequestContext } from '../../contexts/request-context';
+import { ERequestKeys } from '../../types';
 
 const RequestForm: React.FC = () => {
-  const router = useRouter();
   const { initialValues } = useFormikContext<TRequestForm>();
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={4}>
       {Object.keys(initialValues).map(
         (fieldName) =>
-          fieldName !== ERequestFormFields.USER_ID &&
-          fieldName !== ERequestFormFields.REQUEST_ID && (
-            <FormField
-              key={fieldName}
-              fieldName={fieldName as ERequestFormFields}
-            />
+          fieldName !== ERequestKeys.USER_ID &&
+          fieldName !== ERequestKeys.REQUEST_ID &&
+          fieldName !== ERequestKeys.DISPATCH_DATE &&
+          fieldName !== ERequestKeys.PARCEL_TYPE && (
+            <FormField key={fieldName} fieldName={fieldName as ERequestKeys} />
           ),
       )}
+      <HStack>
+        <FormField fieldName={ERequestKeys.DISPATCH_DATE} />
+        <FormField fieldName={ERequestKeys.PARCEL_TYPE} />
+      </HStack>
     </Stack>
   );
 };
