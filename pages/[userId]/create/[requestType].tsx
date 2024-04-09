@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { IRoutingParams } from '../../../types/';
-import { RequestForm } from '../../../components';
+import { SubmitRequestForm } from '../../../components';
 import { Heading } from '@chakra-ui/react';
 
 const RequestTypePage = () => {
@@ -13,7 +13,7 @@ const RequestTypePage = () => {
       <Heading>
         Please, fill in the form to proceed with your {requestType}
       </Heading>
-      <RequestForm />
+      <SubmitRequestForm />
     </div>
   );
 };

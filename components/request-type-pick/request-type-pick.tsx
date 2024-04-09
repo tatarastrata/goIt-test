@@ -17,7 +17,7 @@ const RequestTypePick: React.FC<IRequestTypePickPropTypes> = () => {
 
   return (
     <Container>
-      <Heading mb={4}>What request type would you like to place?</Heading>
+      <Heading mb={4}>What request would you like to place this time?</Heading>
       <HStack justify={'center'}>
         <Button
           isDisabled={!!requestType}

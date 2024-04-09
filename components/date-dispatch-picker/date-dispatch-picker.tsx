@@ -22,6 +22,7 @@ const DateDispatchPicker: React.FC<TDateDispatchPickerPropTypes> = (props) => {
           <Input
             _hover={{
               borderColor: '#38B2AC',
+              cursor: 'pointer',
             }}
           />
         }

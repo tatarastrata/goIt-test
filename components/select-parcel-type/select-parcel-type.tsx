@@ -16,7 +16,8 @@ const SelectParcelType: React.FC<TSelectParcelTypePropTypes> = (props) => {
         {...props}
         isDisabled={isOrder}
         _hover={{
-          backgroundColor: '#38B2AC',
+          borderColor: '#38B2AC',
+          cursor: 'pointer',
         }}
       >
         {isOrder ? (

@@ -1,36 +1,86 @@
-import { ELocalStorageKeys } from '../types/local-storage-types';
+import { ELocalStorageKeys, IUserRequests } from '../types/local-storage-types';
 import { TRequest } from '../types/request-types';
 
-export const saveRequestToLocalStorage = (
-  userId: string,
-  request: TRequest,
-): void => {
-  const storedUserRequests = localStorage.getItem(
-    ELocalStorageKeys.USER_REQUESTS,
-  );
-  const storedAllRequests = localStorage.getItem(
-    ELocalStorageKeys.ALL_REQUESTS,
-  );
-  const userRequests = storedUserRequests ? JSON.parse(storedUserRequests) : [];
-  const allRequests = storedAllRequests ? JSON.parse(storedAllRequests) : {};
+export const saveRequestToLocalStorage = (request: TRequest): void => {
+  if (typeof window !== 'undefined') {
+    const storedUserRequests = localStorage.getItem(
+      ELocalStorageKeys.USER_REQUESTS,
+    );
+    const userRequests: IUserRequests = storedUserRequests
+      ? JSON.parse(storedUserRequests)
+      : {};
 
-  const updatedUserRequests = [...userRequests, request];
-  const updatedAllRequests = {
-    ...allRequests,
-    [userId]: [...(allRequests[userId] || []), request],
-  };
-  localStorage.setItem(
-    ELocalStorageKeys.USER_REQUESTS,
-    JSON.stringify(updatedUserRequests),
-  );
-  localStorage.setItem(
-    ELocalStorageKeys.ALL_REQUESTS,
-    JSON.stringify(updatedAllRequests),
-  );
-  console.log(localStorage);
+    userRequests[request.requestId] = request;
+
+    localStorage.setItem(
+      ELocalStorageKeys.USER_REQUESTS,
+      JSON.stringify(userRequests),
+    );
+  }
 };
 
-export const loadRequestsFromLocalStorage = (): Array<TRequest> => {
-  const data = localStorage.getItem('userRequests');
-  return data ? JSON.parse(data) : [];
+export const loadRequestsFromLocalStorage = (): IUserRequests => {
+  if (typeof window !== 'undefined') {
+    const data = localStorage.getItem(ELocalStorageKeys.USER_REQUESTS);
+    return data ? JSON.parse(data) : {};
+  }
+  return {};
+};
+
+export const deleteRequestFromLocalStorage = (requestId: string) => {
+  if (typeof window !== 'undefined') {
+    const storedUserRequests = localStorage.getItem(
+      ELocalStorageKeys.USER_REQUESTS,
+    );
+
+    if (storedUserRequests) {
+      const userRequests: IUserRequests = JSON.parse(storedUserRequests);
+
+      if (userRequests[requestId]) {
+        console.log('deleting');
+        delete userRequests[requestId];
+        localStorage.setItem(
+          ELocalStorageKeys.USER_REQUESTS,
+          JSON.stringify(userRequests),
+        );
+      }
+    }
+  }
+};
+
+export const addSelectedRequestToLocalStorage = (
+  requestId: string | null,
+): void => {
+  if (requestId === null) {
+    localStorage.setItem(
+      ELocalStorageKeys.SELECTED_REQUEST,
+      JSON.stringify(null),
+    );
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const storedUserRequests = localStorage.getItem(
+      ELocalStorageKeys.USER_REQUESTS,
+    );
+
+    if (storedUserRequests) {
+      const userRequests: IUserRequests = JSON.parse(storedUserRequests);
+
+      if (userRequests[requestId]) {
+        localStorage.setItem(
+          ELocalStorageKeys.SELECTED_REQUEST,
+          JSON.stringify(userRequests[requestId]),
+        );
+      }
+    }
+  }
+};
+
+export const loadSelectedRequestFromLocalStorage = (): TRequest | null => {
+  if (typeof window !== 'undefined') {
+    const data = localStorage.getItem(ELocalStorageKeys.SELECTED_REQUEST);
+    return data ? JSON.parse(data) : {};
+  }
+  return null;
 };

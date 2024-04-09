@@ -5,13 +5,16 @@ import { AppProps } from 'next/app';
 import '../styles/index.scss';
 import React from 'react';
 import { Layout } from '../components';
+import { RequestContextProvider } from '../contexts/request-context';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <RequestContextProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </RequestContextProvider>
     </ChakraProvider>
   );
 }

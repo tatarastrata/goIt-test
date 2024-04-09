@@ -4,7 +4,7 @@ import { BackButton, LogoButton } from '../../components';
 
 const Header: React.FC = () => {
   return (
-    <header>
+    <header className={'pageHeader'}>
       <HStack boxShadow="sm" bg="gray.100" p={4} justify={'space-between'}>
         <BackButton />
         <LogoButton />

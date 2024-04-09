@@ -1,5 +1,8 @@
-import React from 'react';
-import { ETableHeaders } from './all-users-requests-prop-types';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  DESCRIPTION_LENGTH,
+  ETableHeaders,
+} from './all-users-requests-prop-types';
 import {
   Table,
   TableContainer,
@@ -10,18 +13,36 @@ import {
   Tr,
   Badge,
   Heading,
+  Text,
+  HStack,
 } from '@chakra-ui/react';
-import { loadRequestsFromLocalStorage } from '../../utils';
-import { ERequestType } from '../../types';
 import { formatDate } from '../../utils';
+import { ERequestType } from '../../types';
+import { EditRequestButton, DeleteRequestButton } from '../../components';
+import { useRequestContext } from '../../contexts/request-context';
 
 const AllUsersRequests: React.FC = () => {
-  const allRequests =
-    typeof window !== 'undefined' ? loadRequestsFromLocalStorage() : [];
+  const { userRequests } = useRequestContext();
+  const requests = useMemo(() => Object.values(userRequests), [userRequests]);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: string]: boolean;
+  }>({});
 
-  console.log(allRequests);
+  const toggleDescription = useCallback((requestId: string) => {
+    setExpandedDescriptions((prevExpanded) => ({
+      ...prevExpanded,
+      [requestId]: !prevExpanded[requestId],
+    }));
+  }, []);
 
-  if (allRequests?.length === 0) {
+  const truncateDescription = (description: string, requestId: string) =>
+    expandedDescriptions[requestId]
+      ? description
+      : description.length > DESCRIPTION_LENGTH
+      ? `${description.substring(0, DESCRIPTION_LENGTH)}...`
+      : description;
+
+  if (requests?.length === 0) {
     return <Heading>No requests yet</Heading>;
   }
 
@@ -29,17 +50,18 @@ const AllUsersRequests: React.FC = () => {
     <>
       <Heading mb={4}>All your requests:</Heading>
       <TableContainer my={4}>
-        <Table variant="simple">
+        <Table variant="simple" colorScheme="teal" size="sm">
           <Thead>
             <Tr>
               {Object.values(ETableHeaders).map((header) => (
                 <Th key={header}>{header}</Th>
               ))}
+              <Th>Actions</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {allRequests.map((request, index) => (
-              <Tr key={index}>
+            {requests.map((request) => (
+              <Tr key={request.requestId}>
                 <Td>
                   <Badge variant="subtle" colorScheme="teal">
                     {request.type}
@@ -47,11 +69,30 @@ const AllUsersRequests: React.FC = () => {
                 </Td>
                 <Td>{request.parcelType}</Td>
                 <Td>
-                  {request.fromCity} 🔜 {request.toCity}
+                  {request.fromCity} 🔜 <br />
+                  {request.toCity}
                 </Td>
                 <Td>{formatDate(request.dispatchDate)}</Td>
+                <Td whiteSpace="wrap">
+                  {request.type === ERequestType.ORDER && (
+                    <Text
+                      align="left"
+                      size="sm"
+                      as="button"
+                      onClick={() => toggleDescription(request.requestId)}
+                    >
+                      {truncateDescription(
+                        request.description,
+                        request.requestId,
+                      )}
+                    </Text>
+                  )}
+                </Td>
                 <Td>
-                  {request.type === ERequestType.ORDER && request.description}
+                  <HStack spacing={1}>
+                    <EditRequestButton requestId={request.requestId} />
+                    <DeleteRequestButton requestId={request.requestId} />
+                  </HStack>
                 </Td>
               </Tr>
             ))}

@@ -1,0 +1,80 @@
+import React from 'react';
+import { Box, Button, useToast } from '@chakra-ui/react';
+import RequestForm from '../request-form';
+import {
+  ERequestFormFields,
+  RequestFormSchema,
+  TRequestForm,
+} from '../request-form/request-form-prop-types';
+import { EDeliveryParcelType, ERequestType, IRoutingParams } from '../../types';
+import router from 'next/router';
+import { v4 as uuidv4 } from 'uuid';
+import { useRequestContext } from '../../contexts/request-context';
+import { useNavigation } from '../../utils';
+import { Form, Formik } from 'formik';
+
+const SubmitRequestForm: React.FC = () => {
+  const { userId, requestType }: IRoutingParams = router.query;
+  const { addRequest } = useRequestContext();
+  const toast = useToast();
+  const { goToMain } = useNavigation();
+
+  const initialValues: TRequestForm =
+    requestType === ERequestType.DELIVERY
+      ? {
+          [ERequestFormFields.REQUEST_TYPE]: ERequestType.DELIVERY,
+          [ERequestFormFields.FROM_CITY]: '',
+          [ERequestFormFields.TO_CITY]: '',
+          [ERequestFormFields.PARCEL_TYPE]: EDeliveryParcelType.GADGET,
+          [ERequestFormFields.DISPATCH_DATE]: new Date(),
+          [ERequestFormFields.USER_ID]: userId || uuidv4(),
+          [ERequestFormFields.REQUEST_ID]: uuidv4(),
+        }
+      : {
+          [ERequestFormFields.REQUEST_TYPE]: ERequestType.ORDER,
+          [ERequestFormFields.FROM_CITY]: '',
+          [ERequestFormFields.TO_CITY]: '',
+          [ERequestFormFields.PARCEL_TYPE]: 'other',
+          [ERequestFormFields.DISPATCH_DATE]: new Date(),
+          [ERequestFormFields.DESCRIPTION]: '',
+          [ERequestFormFields.USER_ID]: userId || uuidv4(),
+          [ERequestFormFields.REQUEST_ID]: uuidv4(),
+        };
+
+  const handleSubmitNewRequest = (values: TRequestForm) => {
+    if (!userId) return;
+    addRequest(values);
+    toast({
+      status: 'success',
+      duration: 3000,
+      description: 'Your request is successfully submitted',
+    });
+    goToMain();
+  };
+
+  return (
+    <Box>
+      <Formik
+        validationSchema={RequestFormSchema}
+        initialValues={initialValues}
+        onSubmit={handleSubmitNewRequest}
+      >
+        {(props) => (
+          <Form>
+            <RequestForm />
+            <Button
+              isDisabled={!props.isValid || !props.dirty}
+              mt={4}
+              colorScheme="teal"
+              type="submit"
+            >
+              Submit your {requestType}
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    </Box>
+  );
+};
+
+export default SubmitRequestForm;

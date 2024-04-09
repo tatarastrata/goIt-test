@@ -3,13 +3,15 @@ import { TRequest } from './request-types';
 export enum ELocalStorageKeys {
   USER_REQUESTS = 'userRequests',
   USER_ID = 'userId',
-  ALL_REQUESTS = 'allRequests',
+  SELECTED_REQUEST = 'selectedRequest',
+}
+
+export interface IUserRequests {
+  [requestId: string]: TRequest;
 }
 
 export interface ILocalStorage {
-  [ELocalStorageKeys.USER_REQUESTS]: Array<TRequest>;
+  [ELocalStorageKeys.USER_REQUESTS]: IUserRequests;
   [ELocalStorageKeys.USER_ID]: string;
-  [ELocalStorageKeys.ALL_REQUESTS]: {
-    [userId: string]: Array<TRequest>;
-  };
+  [ELocalStorageKeys.SELECTED_REQUEST]: TRequest;
 }
