@@ -9,7 +9,9 @@ const RedirectPage: React.FC = () => {
   const { userId }: IRoutingParams = router.query;
 
   useEffect(() => {
-    router.replace(`${userId}/requests`);
+    if (typeof window !== 'undefined') {
+      router.replace(`${userId}/requests`);
+    }
   }, [router, userId]);
 
   return null;

@@ -1,3 +1,5 @@
+// [userId]/create/[requestType]
+
 import React from 'react';
 import { useRouter } from 'next/router';
 import { IRoutingParams } from '../../../types/';
@@ -7,6 +9,10 @@ import { Container, Heading } from '@chakra-ui/react';
 const RequestTypePage = () => {
   const router = useRouter();
   const { requestType }: IRoutingParams = router.query;
+
+  if (typeof window === 'undefined') {
+    return null;
+  }
 
   return (
     <div>
