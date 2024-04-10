@@ -17,3 +17,4 @@ export { default as RequestModal } from './request-modal';
 export { default as RequestDetailsModalContent } from './request-details-modal-content';
 export { default as RequestDetails } from './request-details';
 export { default as SimilarRequests } from './similar-requests';
+export { default as ErrorBoundary } from './error-boundary';

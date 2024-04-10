@@ -4,17 +4,19 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import '../styles/index.scss';
 import React from 'react';
-import { Layout } from '../components';
+import { ErrorBoundary, Layout } from '../components';
 import { RequestContextProvider } from '../contexts/request-context';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
-      <RequestContextProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </RequestContextProvider>
+      <ErrorBoundary>
+        <RequestContextProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </RequestContextProvider>
+      </ErrorBoundary>
     </ChakraProvider>
   );
 }
