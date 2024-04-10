@@ -32,6 +32,7 @@ const RequestDetailsModalContent: React.FC<
   const handleDeleteRequest = () => {
     deleteRequest(selectedRequest.requestId);
     toast({
+      position: 'bottom-left',
       status: 'success',
       duration: 3000,
       description: 'Your request is successfully deleted',

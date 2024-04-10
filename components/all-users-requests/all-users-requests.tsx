@@ -1,8 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import {
-  DESCRIPTION_LENGTH,
-  ETableHeaders,
-} from './all-users-requests-prop-types';
+import React, { useMemo, useState } from 'react';
 import {
   Table,
   TableContainer,
@@ -13,35 +9,62 @@ import {
   Tr,
   Badge,
   Heading,
-  Text,
   Button,
+  IconButton,
 } from '@chakra-ui/react';
 import { formatDate } from '../../utils';
-import { ERequestType } from '../../types';
 import { useRequestContext } from '../../contexts/request-context';
+import { ITableSort, tableHeaders } from './all-users-requests-prop-types';
+import { UpDownIcon } from '@chakra-ui/icons';
+import { ERequestKeys, IOrderRequest } from '../../types';
+import { compareAsc, compareDesc } from 'date-fns';
 
 const AllUsersRequests: React.FC = () => {
   const { userRequests, addSelectedRequest } = useRequestContext();
+
   const requests = useMemo(() => Object.values(userRequests), [userRequests]);
-  const [expandedDescriptions, setExpandedDescriptions] = useState<{
-    [key: string]: boolean;
-  }>({});
 
-  const toggleDescription = useCallback((requestId: string) => {
-    setExpandedDescriptions((prevExpanded) => ({
-      ...prevExpanded,
-      [requestId]: !prevExpanded[requestId],
-    }));
-  }, []);
+  const [sorting, setSorting] = useState<ITableSort | null>();
 
-  const truncateDescription = (description: string, requestId: string) =>
-    expandedDescriptions[requestId]
-      ? description
-      : description.length > DESCRIPTION_LENGTH
-      ? `${description.substring(0, DESCRIPTION_LENGTH)}...`
-      : description;
+  const handleSort = (key: ERequestKeys) => {
+    if (sorting !== null && sorting?.key === key) {
+      setSorting({
+        key: sorting.key,
+        isDesc: !sorting.isDesc,
+      });
+    } else {
+      setSorting({
+        key: key,
+        isDesc: true,
+      });
+    }
+  };
 
-  if (requests?.length === 0) {
+  const sortedRequests = useMemo(() => {
+    if (!sorting || sorting.key === ERequestKeys.DESCRIPTION) {
+      return requests;
+    }
+
+    return [...requests].sort((requestOne, requestTwo) => {
+      const valueOne = (requestOne as IOrderRequest)[sorting.key];
+      const valueTwo = (requestTwo as IOrderRequest)[sorting.key];
+
+      if (sorting.key === ERequestKeys.DISPATCH_DATE) {
+        return sorting.isDesc
+          ? compareDesc(valueOne, valueTwo)
+          : compareAsc(valueOne, valueTwo);
+      }
+
+      if (typeof valueOne === 'string' && typeof valueTwo === 'string') {
+        return sorting.isDesc
+          ? valueTwo.localeCompare(valueOne)
+          : valueOne.localeCompare(valueTwo);
+      }
+      return 0;
+    });
+  }, [requests, sorting]);
+
+  if (requests.length === 0) {
     return <Heading>No requests yet</Heading>;
   }
 
@@ -52,40 +75,32 @@ const AllUsersRequests: React.FC = () => {
         <Table variant="simple" colorScheme="teal" size="sm">
           <Thead>
             <Tr>
-              {Object.values(ETableHeaders).map((header) => (
-                <Th key={header}>{header}</Th>
+              {tableHeaders.map(({ key, value }) => (
+                <Th key={key} onClick={() => handleSort(key)}>
+                  {value}
+                  <IconButton
+                    size="s"
+                    variant="link"
+                    m={1}
+                    aria-label="Sort table"
+                    icon={<UpDownIcon />}
+                  />
+                </Th>
               ))}
               <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
-            {requests.map((request) => (
+            {sortedRequests.map((request) => (
               <Tr key={request.requestId}>
                 <Td>
                   <Badge variant="subtle" colorScheme="teal">
                     {request.type}
                   </Badge>
                 </Td>
-                <Td>
-                  {request.fromCity} 🔜 <br />
-                  {request.toCity}
-                </Td>
+                <Td>{request.fromCity}</Td>
+                <Td>{request.toCity}</Td>
                 <Td>{formatDate({ date: request.dispatchDate })}</Td>
-                <Td whiteSpace="wrap">
-                  {request.type === ERequestType.ORDER && (
-                    <Text
-                      align="left"
-                      size="sm"
-                      as="button"
-                      onClick={() => toggleDescription(request.requestId)}
-                    >
-                      {truncateDescription(
-                        request.description,
-                        request.requestId,
-                      )}
-                    </Text>
-                  )}
-                </Td>
                 <Td>
                   <Button
                     size="sm"

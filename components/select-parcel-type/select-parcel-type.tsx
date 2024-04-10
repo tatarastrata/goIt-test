@@ -5,6 +5,7 @@ import { EDeliveryParcelType, ERequestType } from '../../types';
 import { useFormikContext } from 'formik';
 import { TRequestForm } from '../request-form/request-form-prop-types';
 import { useRouter } from 'next/router';
+import { sentenceCase } from '../../utils';
 
 const SelectParcelType: React.FC<TSelectParcelTypePropTypes> = (props) => {
   const {
@@ -31,11 +32,11 @@ const SelectParcelType: React.FC<TSelectParcelTypePropTypes> = (props) => {
         variant="filled"
       >
         {isOrder ? (
-          <option value="other">other</option>
+          <option value="other">Other</option>
         ) : (
           Object.values(EDeliveryParcelType).map((type) => (
             <option value={type} key={type}>
-              {type}
+              {sentenceCase(type)}
             </option>
           ))
         )}

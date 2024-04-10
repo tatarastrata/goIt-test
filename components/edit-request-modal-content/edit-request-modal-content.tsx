@@ -33,6 +33,7 @@ const EditRequestModalContent: React.FC<IEditRequestModalContentPropTypes> = ({
   const handleSubmitEditedRequest = (values: TRequest) => {
     editRequest(values);
     toast({
+      position: 'bottom-left',
       status: 'success',
       duration: 3000,
       description: 'Your request is successfully edited and resubmitted',

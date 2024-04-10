@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useRequestContext } from '../../contexts/request-context';
-import { formatDate } from '../../utils';
+import { formatDate, sentenceCase } from '../../utils';
 import { ERequestType } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -44,10 +44,10 @@ const RequestDetails: React.FC = () => {
         </GridItem>
         <GridItem colSpan={2}>
           {Object.values(objectLiteral).map((value) => {
-            if (value !== null) {
+            if (value?.length) {
               return (
                 <Text key={uuidv4()} {...paragraphAttributes}>
-                  {value}
+                  {sentenceCase(value)}
                 </Text>
               );
             }

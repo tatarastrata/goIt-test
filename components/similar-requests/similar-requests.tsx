@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   Box,
+  Button,
   HStack,
   List,
   ListItem,
@@ -11,6 +12,7 @@ import {
 import { useRequestContext } from '../../contexts/request-context';
 import { ERequestKeys, TRequest } from '../../types';
 import { formatDate } from '../../utils';
+import { sentenceCase } from '../../utils/sentenceCaseUtils';
 
 const radios: Array<[string, string]> = [
   [ERequestKeys.REQUEST_TYPE, 'Request type'],
@@ -21,22 +23,25 @@ const radios: Array<[string, string]> = [
 
 const SimilarRequests: React.FC = () => {
   const [filterFactor, setFilterFactor] = useState<string>(radios[0][0]);
-  const { userRequests, selectedRequest } = useRequestContext();
+  const { selectedRequest, addSelectedRequest, allUsersRequests } =
+    useRequestContext();
 
   const requestsToDisplay = useMemo(() => {
     return selectedRequest
-      ? Object.values(userRequests).filter(
-          (request) =>
-            request[filterFactor as keyof TRequest] ===
-              selectedRequest[filterFactor as keyof TRequest] &&
-            request.requestId !== selectedRequest.requestId,
-        )
+      ? Object.values(allUsersRequests)
+          .flatMap((innerArray) => innerArray)
+          .filter(
+            (request) =>
+              request[filterFactor as keyof TRequest] ===
+                selectedRequest[filterFactor as keyof TRequest] &&
+              request.requestId !== selectedRequest.requestId,
+          )
       : [];
-  }, [filterFactor, selectedRequest, userRequests]);
+  }, [allUsersRequests, filterFactor, selectedRequest]);
 
   return (
     <Box w="100%">
-      <Text mb={4}>Similar requests:</Text>
+      <Text mb={4}>Similar requests among all users:</Text>
       <RadioGroup onChange={setFilterFactor} value={filterFactor} mb={2}>
         <HStack>
           {radios.map((radio) => (
@@ -49,8 +54,17 @@ const SimilarRequests: React.FC = () => {
       <List>
         {requestsToDisplay.map((request: TRequest) => (
           <ListItem fontSize="sm" key={request.requestId}>
-            {request.type} from {request.fromCity} to {request.toCity} for{' '}
-            {formatDate({ date: request.dispatchDate })}
+            <Button
+              onClick={() => addSelectedRequest(request.requestId)}
+              variant="link"
+              size="sm"
+            >
+              <Text>
+                {sentenceCase(request.type)}
+                {` from ${request.fromCity} to ${request.toCity} for `}
+                {formatDate({ date: request.dispatchDate })}
+              </Text>
+            </Button>
           </ListItem>
         ))}
       </List>

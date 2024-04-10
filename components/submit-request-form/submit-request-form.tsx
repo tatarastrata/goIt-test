@@ -49,6 +49,7 @@ const SubmitRequestForm: React.FC = () => {
     if (!userId) return;
     addRequest(values);
     toast({
+      position: 'bottom-left',
       status: 'success',
       duration: 3000,
       description: 'Your request is successfully submitted',

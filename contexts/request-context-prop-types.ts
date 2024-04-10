@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { IUserRequests, TRequest } from '../types';
+import { IAllUsersRequests, IUserRequests, TRequest } from '../types';
 
 export interface IRequestContextPropTypes {
   children: ReactNode;
@@ -7,6 +7,7 @@ export interface IRequestContextPropTypes {
 
 export interface IRequestContextData {
   userRequests: IUserRequests;
+  allUsersRequests: IAllUsersRequests;
   addRequest: (request: TRequest) => void;
   deleteRequest: (requestId: string) => void;
   editRequest: (request: TRequest) => void;

@@ -1,3 +1,4 @@
 export * from './localStorageUtils';
-export * from './navigation';
-export * from './formatDate';
+export * from './navigationUtils';
+export * from './formatDateUtils';
+export * from './sentenceCaseUtils';

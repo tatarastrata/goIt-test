@@ -1,8 +1,5 @@
-/* eslint-disable no-unused-vars */
-const path = require('path');
-
 module.exports = {
-  webpack: (config, { dev }) => {
+  webpack: (config) => {
     config.resolve.extensions.push('.ts', '.tsx');
     config.module.rules.push(
       {

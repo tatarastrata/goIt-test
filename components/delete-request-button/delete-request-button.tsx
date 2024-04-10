@@ -13,6 +13,7 @@ const DeleteRequestButton: React.FC<IDeleteRequestButtonPropTypes> = ({
   const handleDeleteRequest = () => {
     deleteRequest(requestId);
     toast({
+      position: 'bottom-left',
       status: 'success',
       duration: 3000,
       description: 'Your request is successfully deleted',

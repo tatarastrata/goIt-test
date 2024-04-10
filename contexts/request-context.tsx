@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   IRequestContextData,
   IRequestContextPropTypes,
@@ -6,15 +6,17 @@ import {
 import {
   addSelectedRequestToLocalStorage,
   deleteRequestFromLocalStorage,
-  loadRequestsFromLocalStorage,
+  loadUserRequestsFromLocalStorage,
   loadSelectedRequestFromLocalStorage,
-  saveRequestToLocalStorage,
+  saveUserRequestToLocalStorage,
+  loadAllUsersRequestsFromLocalStorage,
+  saveAllUsersRequestToLocalStorage,
 } from '../utils';
-import { ELocalStorageKeys, IUserRequests, TRequest } from '../types';
+import { IUserRequests, TRequest, IAllUsersRequests } from '../types';
 
-// Create the context
 const RequestContext = createContext<IRequestContextData>({
   userRequests: {},
+  allUsersRequests: {},
   deleteRequest: () => {},
   addRequest: () => {},
   editRequest: () => {},
@@ -22,7 +24,6 @@ const RequestContext = createContext<IRequestContextData>({
   selectedRequest: null,
 });
 
-// Custom hook to consume the context
 export const useRequestContext = () => {
   const context = useContext(RequestContext);
   if (!context) {
@@ -31,86 +32,97 @@ export const useRequestContext = () => {
   return context;
 };
 
-// Provider component
 const RequestContextProvider: React.FC<IRequestContextPropTypes> = ({
   children,
 }) => {
-  // Load initial user requests from local storage
-  const [userRequests, setUserRequests] = useState(
-    loadRequestsFromLocalStorage(),
+  const [userRequests, setUserRequests] = useState<IUserRequests>({});
+  const [allUsersRequests, setAllUsersRequests] = useState<IAllUsersRequests>(
+    {},
   );
-  const [selectedRequest, setSelectedRequest] = useState(
-    loadSelectedRequestFromLocalStorage(),
-  );
+  const [selectedRequest, setSelectedRequest] = useState<TRequest | null>(null);
 
-  // Function to add a request
+  useEffect(() => {
+    const storedUserRequests = loadUserRequestsFromLocalStorage();
+    setUserRequests(storedUserRequests);
+    const storedAllUsersRequests = loadAllUsersRequestsFromLocalStorage();
+    setAllUsersRequests(storedAllUsersRequests);
+    const storedSelectedRequest = loadSelectedRequestFromLocalStorage();
+    setSelectedRequest(storedSelectedRequest);
+  }, []);
+
   const addRequest = (request: TRequest) => {
-    saveRequestToLocalStorage(request);
+    saveUserRequestToLocalStorage(request);
     setUserRequests((prevUserRequests) => ({
       ...prevUserRequests,
       [request.requestId]: request,
     }));
+    setAllUsersRequests((prevAllUsersRequests) => ({
+      ...prevAllUsersRequests,
+      [request.userId]: [
+        ...(prevAllUsersRequests[request.userId] || []),
+        request,
+      ],
+    }));
   };
 
-  // Function to delete a request
   const deleteRequest = (requestId: string) => {
     deleteRequestFromLocalStorage(requestId);
+    setSelectedRequest(null);
     setUserRequests((prevUserRequests) => {
       const updatedRequests = { ...prevUserRequests };
       delete updatedRequests[requestId];
       return updatedRequests;
     });
-    if (selectedRequest?.requestId == requestId) {
-      setSelectedRequest(null);
-    }
-  };
-
-  //Function to edit a request
-  const editRequest = (updatedRequest: TRequest) => {
-    const storedUserRequests = localStorage.getItem(
-      ELocalStorageKeys.USER_REQUESTS,
-    );
-
-    if (storedUserRequests) {
-      const userRequests: IUserRequests = JSON.parse(storedUserRequests);
-
-      if (userRequests[updatedRequest.requestId]) {
-        // Update the request in local storage
-        userRequests[updatedRequest.requestId] = updatedRequest;
-
-        localStorage.setItem(
-          ELocalStorageKeys.USER_REQUESTS,
-          JSON.stringify(userRequests),
-        );
-
-        // Update the state to trigger re-render
-        setUserRequests({ ...userRequests });
+    setAllUsersRequests((prevAllUsersRequests) => {
+      const updatedAllUsersRequests = { ...prevAllUsersRequests };
+      for (const userId in updatedAllUsersRequests) {
+        updatedAllUsersRequests[userId] = updatedAllUsersRequests[
+          userId
+        ].filter((request) => request.requestId !== requestId);
       }
-    }
+      return updatedAllUsersRequests;
+    });
   };
 
-  //Function to add a selectedRequest
+  const editRequest = (updatedRequest: TRequest) => {
+    setUserRequests((prevUserRequests) => ({
+      ...prevUserRequests,
+      [updatedRequest.requestId]: updatedRequest,
+    }));
+    setAllUsersRequests((prevAllUsersRequests) => {
+      const updatedAllUsersRequests = { ...prevAllUsersRequests };
+      for (const userId in updatedAllUsersRequests) {
+        updatedAllUsersRequests[userId] = updatedAllUsersRequests[userId].map(
+          (request) =>
+            request.requestId === updatedRequest.requestId
+              ? updatedRequest
+              : request,
+        );
+      }
+      return updatedAllUsersRequests;
+    });
+    if (selectedRequest?.requestId === updatedRequest.requestId) {
+      addSelectedRequest(updatedRequest.requestId);
+    }
+    saveUserRequestToLocalStorage(updatedRequest);
+    saveAllUsersRequestToLocalStorage(updatedRequest);
+  };
+
   const addSelectedRequest = (requestId: string | null) => {
     addSelectedRequestToLocalStorage(requestId);
-    const storedUserRequests = localStorage.getItem(
-      ELocalStorageKeys.USER_REQUESTS,
-    );
-
-    if (requestId == null) {
+    if (requestId === null) {
       setSelectedRequest(null);
       return;
     }
-
-    if (storedUserRequests) {
-      const userRequests: IUserRequests = JSON.parse(storedUserRequests);
-      const selectedRequest = userRequests[requestId];
-      setSelectedRequest(selectedRequest);
-    }
+    const selectedRequest =
+      userRequests[requestId] ||
+      (allUsersRequests[requestId] && allUsersRequests[requestId][0]);
+    setSelectedRequest(selectedRequest || null);
   };
 
-  // Context value
   const contextValue: IRequestContextData = {
     userRequests,
+    allUsersRequests,
     addRequest,
     deleteRequest,
     addSelectedRequest,
@@ -118,7 +130,6 @@ const RequestContextProvider: React.FC<IRequestContextPropTypes> = ({
     editRequest,
   };
 
-  // Render the provider with context value and children
   return (
     <RequestContext.Provider value={contextValue}>
       {children}
